@@ -6,23 +6,11 @@ import fnmatch
 import numpy as np
 from scipy.io import wavfile
 from features import mfcc
+from phones import phones, phonesToInt
+
 
 h5_file_path = "/ha/work/people/klejch/saved_data.h5"
 data_path = "/a/merkur2/vystadial/speech-corpora/en/TIMIT_Acoustic-Phonetic_Cont.Speech_Corpus_LDC93S1/timit/TIMIT/TRAIN/"
-
-phones = [
-    'aa', 'ae', 'ah', 'ao', 'aw', 'ax', 'ax-h',
-    'axr', 'ay', 'b', 'bcl', 'ch', 'd', 'dcl',
-    'dh', 'dx', 'eh', 'el', 'em', 'en', 'eng',
-    'epi', 'er', 'ey', 'f', 'g', 'gcl', 'h#',
-    'hh', 'hv', 'ih', 'ix', 'iy', 'jh', 'k',
-    'kcl', 'l', 'm', 'n', 'ng', 'nx', 'ow',
-    'oy', 'p', 'pau', 'pcl', 'q', 'r', 's',
-    'sh', 't', 'tcl', 'th', 'uh', 'uw', 'ux',
-    'v', 'w', 'y', 'z', 'zh'
-]
-
-phonesToInt = dict(zip(phones, range(len(phones))))
 
 def read_phones_transcript(wav_path):
     transcript = wav_path[:-4] + ".PHN"
