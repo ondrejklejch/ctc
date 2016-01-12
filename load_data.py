@@ -6,7 +6,7 @@ import theano
 
 path = '/ha/work/people/klejch/saved_data.h5'
 
-def load_data_timit():
+def load_data(batch_size = 10):
     h5_file_path = os.path.join(path)
     h5_file = tables.openFile(h5_file_path, mode='r')
 
@@ -39,20 +39,15 @@ def load_data_timit():
     (train_x, train_y) = get_section("train")
     (valid_x, valid_y) = get_section("validate")
     (test_x, test_y) = get_section("test")
-    rval = [(train_x, train_y), (valid_x, valid_y), (test_x, test_y)]
-    return rval
 
-def load_data_timit_minibatches(batch_size = 10):
-	(train, valid, test) = load_data_timit()
-
-	x_mean = np.mean(np.concatenate(train[0]), axis=0)
-	x_std = np.std(np.concatenate(train[0]), axis=0) 
-
-	train_batches = make_batches(train[0], train[1], batch_size, x_mean, x_std)	
-        valid_batches = make_batches(valid[0], valid[1], batch_size, x_mean, x_std)
-	test_batches = make_batches(test[0], test[1], batch_size, x_mean, x_std)
-
-	return (train_batches, valid_batches, test_batches)
+    x_mean = np.mean(np.concatenate(train_x), axis=0)
+    x_std = np.std(np.concatenate(train_x), axis=0) 
+    
+    train_batches = make_batches(train_x, train_y, batch_size, x_mean, x_std)	
+    valid_batches = make_batches(valid_x, valid_y, batch_size, x_mean, x_std)
+    test_batches = make_batches(test_x, test_y, batch_size, x_mean, x_std)
+    
+    return (train_batches, valid_batches, test_batches)
 
 def make_batches(x, y, batch_size, x_mean, x_std):
 	batches = []
@@ -79,7 +74,7 @@ def make_batches(x, y, batch_size, x_mean, x_std):
 			ys[j, 0:len(y)] = y
 			ys_lengths[j] = len(y)
 
-		batches.append((preprocess(xs), ys, xs_lengths, ys_lengths, mask))
+		batches.append((xs, ys, xs_lengths, ys_lengths, mask))
 
 	return batches
 
@@ -96,4 +91,3 @@ def interleave(y):
 	interleaved[1::2] = y + 1
 
 	return interleaved
-
